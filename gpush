@@ -1,0 +1,31 @@
+#!/bin/zsh
+
+# Catch any input that is invalid.
+if [[ $# -eq 0  || $# -gt 1 ]]; then
+    echo "\nImproper usage. Try:"
+    echo "\ngit-push [ \"message\" | -h | --help ]"
+    echo "      git-push \"init commit\""
+    echo "      git-push -h"
+    echo "      git-push --help"
+
+    exit
+
+# Display help.
+elif [[ $1 == "-h" || $1 == "--help" ]]; then
+    echo "\nMaking the Git command line tool easier to use with simpler commands."
+    echo "User must provide an argument. The argument must be wrapped in \"\" symbols."
+
+    echo "\n\nUsage:"
+    echo "\ngit-push [ \"message\" | -h | --help ]"
+    echo "      git-push \"init commit\""
+    echo "      git-push -h"
+    echo "      git-push --help"
+
+    exit
+
+# Push changes to remote repository.
+else
+    git stage -A
+    git commit -m "$1"
+    git push
+fi

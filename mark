@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Usage: mark [-ls] [-rm number] [-rm number TO number]
+# Creates a bookmark of the current directory, displays a list of bookmarks if the -ls option is provided
+BOOKMARKS_FILE=~/.bookmarks
+
+# Catch case where there are too many arguments.
+if [[ $# -gt 1 ]]; then
+    echo "Proper usage: mark [ -ls | -rm [ keyword ] ]"
+    echo "      eg. mark"
+    echo "      eg. mark -ls"
+    echo "      eg. mark -rm portfolio"
+    echo "      eg. mark -h"
+    echo "      eg. mark --help"
+
+    exit
+
+# Help page
+elif [[ $1 == "-h" || $1 == "--help" ]]; then
+    echo "\nCreate and manage persistent bookmarks inside of terminal sessions.\n"
+    echo "Usage:"
+    echo "      mark"
+    echo "      mark -ls"
+    echo "          eg. run main"
+    echo "      mark -rm"
+    echo "      mark -h"
+    echo "      mark --help"
+
+    exit
+
+# Add a bookmark to the bookmarks file.
+elif [ $# == 0 ]; then
+    echo $(pwd) >> $BOOKMARKS_FILE
+
+# List bookmarks stored in the bookmarks file.
+elif [ "$1" == "-ls" ]; then
+    echo "Bookmarks:"
+    cat $BOOKMARKS_FILE
+
+# Remove a bookmark stored in the bookmarks file.
+elif [ "$1" == "-rm" ]; then
+    # The user is trying to remove a single bookmark
+    # Check if the bookmark exists
+    if [ $(grep -c "$2" $BOOKMARKS_FILE) -gt 0 ]; then
+
+      # Remove the bookmark
+      sed -i .bak $2d $BOOKMARKS_FILE
+    else
+      echo "Bookmark not found"
+    fi
+
+# Invalid argument, display an error message
+else
+    echo "Usage: mark [-ls] [-rm [number | number TO number]]"
+fi

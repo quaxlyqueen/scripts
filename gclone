@@ -1,0 +1,62 @@
+#!/bin/zsh
+
+CONFIG="$HOME/.config/gclone/gclone.conf"
+
+# Detect if there is already a default user. If not, set it to quaxlyqueen.
+if [[ $(grep -c "default-user: " $CONFIG) -gt 0 ]]; then
+    DEFAULT_USER=`grep "default-user: " $CONFIG | cut -d " " -f 2`
+else
+    echo "default-user: quaxlyqueen" >> $CONFIG
+fi
+
+# Catch any invalid input.
+if [[ $# -eq 0 || $# -gt 2 ]]; then
+    echo "\nImproper usage. Try:"
+    echo "\ngclone [ { owner }/[ repo { -h | --help | --set-default [ username ] } ] ]"
+    echo "      gclone gclone"
+    echo "      gclone quaxlyqueen/gclone"
+    echo "      gclone -h"
+    echo "      gclone --help"
+    echo "      gclone --set-default quaxlyqueen"
+
+    exit
+
+# Display help.
+elif [[ $1 == "-h" || $1 == "--help" ]]; then
+    echo "\nMaking the Git command line tool easier to use with simpler commands."
+    echo "User must provide an argument. This argument is in the format of:"
+    echo "    \"owner/repository\""
+    echo "The \"owner/\" portion may be excluded. By default, this will clone from"
+    echo "the owner quaxlyqueen. WIP: This may be configured at \"$CONFIG\"."
+    echo "an example is below."
+
+    echo "\n\ndefault-user: quaxlyqueen"
+
+    echo "\n\nUsage:"
+    echo "gclone [ { owner }/[ repo ] ] { -h | --help | --set-default [ username ] }"
+    echo "      gclone gclone"
+    echo "      gclone quaxlyqueen/gclone"
+    echo "      gclone -h"
+    echo "      gclone --help"
+    echo "      gclone --set-default quaxlyqueen"
+
+    exit
+
+# Set the default owner to clone repo's.
+elif [[ $1 == "--set-default" ]]; then 
+  sed -i "/default-user: /c\default-user: $2" $CONFIG
+  echo "\nDefault user has been set to $2"
+  exit
+
+# Clone a git repo from a specified owner.
+elif [[ $1 =~ "/" ]]; then
+    git clone https://github.com/$1
+    REPO=`cut $1 -d "/" -f 2`
+
+# Clone a git repo from the owner. By default, this will be the owner quaxlyqueen.
+else
+    git clone https://github.com/$DEFAULT_USER/$1
+    REPO=$1
+fi
+
+cd $REPO

@@ -1,0 +1,134 @@
+#!/bin/zsh
+
+# Supported languages.
+TYPES=("c", "cs", "java", "js", "go")
+
+# Catch case where there are too many arguments.
+if [[ $# -gt 1 ]]; then
+    echo "Proper usage: run {file}"
+    echo "      eg. run"
+    echo "      eg. run main"
+    echo "      eg. run -h"
+    echo "      eg. run --help"
+
+    exit
+
+# Help page
+elif [[ $1 == "-h" || $1 == "--help" ]]; then
+    echo "\nAbstracting away command line tools to compile and run code for various languages."
+    echo "User can use with or without an argument file, the filetype is not needed."
+    echo "With no arguments, 'run' will list available (and supported) files."
+    echo "Additionally, 'run' prompts for and passes command line arguments for a program.\n"
+    echo "Detects required tools to use based upon filetypes.\n"
+    echo "Usage:"
+    echo "      run"
+    echo "      run [filename]"
+    echo "          eg. run main"
+    echo "      run -h"
+    echo "      run --help\n"
+    echo "Supported languages: $TYPES"
+
+    exit
+
+# Default state, with a reminder of what files may be launched from based upon the currently supported languages.
+elif [[ $# -eq 0 ]]; then
+
+    echo "Files that may be launched from:"
+
+    # List files available to launch from.
+    for f in * 
+    do 
+      TYPE=`echo $f | cut -d "." -f 2`
+      counter=0
+
+      # Only list supported filetypes.
+      if [[ ${TYPES[@]} =~ $TYPE ]]; then
+        counter=$((counter+1)) # Increment counter to indicate the number of results.
+
+        # Format: filename (file type)
+        echo `echo $f | cut -d "." -f 1` "("$TYPE")"
+      fi
+    done
+    echo $counter" available files.\n"
+
+    # Catch case where there are no available files to run and exit.
+    if [[ $counter -eq 0 ]]; then
+      echo "No available files to run. Exiting."
+      exit
+    fi
+
+    read "?Which file would you like to launch from: " TMP
+
+    # Locate file and assign variables associated with the file (name and filetype).
+    for f in * 
+    do 
+        FILE=`echo $f | cut -d "." -f 1`
+        if [[ $FILE == $TMP ]]; then
+            NAME=$TMP
+            TYPE=`echo $f | cut -d "." -f 2`
+        fi
+    done
+
+# User has provided the file name.
+elif [[ $# -eq 1 ]]; then
+
+    # Locate file and assign variables associated with the file (name and filetype).
+    for f in *
+    do 
+        FILE=`echo $f | cut -d "." -f 1`
+        if [[ $FILE == $1 ]]; then
+            NAME=$FILE
+            TYPE=`echo $f | cut -d "." -f 2`
+        fi
+    done
+fi
+
+read "?Arguments: " ARGS
+
+# Run C app.
+if [[ $TYPE == "c" ]]; then
+    clear
+    echo "Compiling..."
+        gcc $NAME.c -lm
+    echo "Output..."
+        ./a.out $ARGS
+
+# Run C# app.
+elif [[ $TYPE == "cs" ]]; then
+    clear
+    echo "Compiling..."
+      mcs -out:$NAME.exe $NAME.cs
+    echo "Output..."
+      mono $NAME.exe
+
+# Run Java app.
+elif [[ $TYPE == "java" ]]; then
+    clear
+    CP=.:../lib/*
+    echo "Compiling..."
+        javac -cp $CP *.java
+    echo "Output...";
+        java -cp $CP $NAME $ARGS
+        rm *.class
+
+# Run JavaScript app.
+elif [[ $TYPE == "js" ]]; then
+    clear
+    echo "Output..."
+    node $NAME.js
+
+# Run Golang app.
+elif [[ $TYPE == "go" ]]; then
+    clear
+    echo "Compiling..."
+    go build
+    echo "Output..."
+      ./discordo #TODO: need to dynamically obtain the newly created object file to run and then delete
+      rm discordo
+
+else
+    read "?Language is not supported. Create a GH issue (y/n, default y): " GH
+    if [[ $GH == "y" || $GH == "" ]]; then
+        echo "Need to implement issue reporting."
+    fi
+fi

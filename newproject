@@ -1,0 +1,128 @@
+#!/bin/zsh
+
+# Dependencies:
+#     quaxlyqueen/templates
+#
+#     quaxlyqueen/scripts/mark
+#     quaxlyqueen/scripts/goto
+#     quaxlyqueen/scripts/ginit
+
+# Supported languages.
+TYPES=("c", "c-sharp", "java", "js", "go")
+
+# Catch case where there are too many arguments.
+if [[ $# -gt 3 ]]; then     
+    echo "Improper usage. Try:"
+    echo "\nnewproject { language } { projectname } { -g | --git-project }"
+    echo "      newproject"
+    echo "      newproject c"
+    echo "      newproject c app"
+    echo "      newproject c app -g"
+    echo "      newproject c app --git-project"
+    echo "      newproject -h"
+    echo "      newproject --help\n"
+
+    echo "Supported languages: $TYPES"
+
+    exit
+
+# Help page
+elif [[ $1 == "-h" || $1 == "--help" ]]; then
+    echo "\nAbstracting away command line tools to create projects in various languages."
+    echo "User can use with or without arguments."
+    echo "With no arguments, 'newproject' will prompt for a supported language, project name,"
+    echo "  and if a git repo should be created."
+    echo "Bookmarks the new project directory using the 'mark' script."
+    echo "Detects required tools to use based upon language selected.\n"
+    echo "Usage:"
+    echo "\nnewproject { language } { projectname } { -g | --git-project }"
+    echo "      newproject"
+    echo "      newproject c"
+    echo "      newproject c app"
+    echo "      newproject c app -g"
+    echo "      newproject c app --git-project"
+    echo "      newproject -h"
+    echo "      newproject --help\n"
+
+    echo "Supported languages: $TYPES"
+
+    exit
+
+elif [[ $# -eq 0 ]]; then
+    read "?Language: " LANG
+    read "?Project name: " NAME
+    read "?Git project (y/N): " GIT
+
+# User provides the project's language.
+elif [[ $# -eq 1 ]]; then
+    LANG=$1
+    read "?Project name: " NAME
+    read "?Git project (y/N): " GIT
+
+# User provides arguments for the language and project name.
+elif [[ $# -eq 2 ]]; then
+    LANG=$1
+    NAME=$2
+    read "?Git project (y/N): " GIT
+
+# User provides arguments for all fields.
+elif [[ $# -eq 3 ]]; then
+    LANG=$1
+    NAME=$2
+    GIT=$3
+fi
+
+# Check if the language the user has provided is supported.
+if [[ ${TYPES[@]} =~ $LANG ]]; then
+    echo Creating $LANG project $NAME
+
+# Language unsupported, prompt user to create a Github issue.
+else
+    read "?Language is not supported. Create a GH issue (y/N): " GH
+    if [[ $GH == "y" || $GH == "" ]]; then
+        gh issue create --web
+    fi
+fi
+
+
+# Create a new C project.
+if [[ $LANG == "c" ]]; then
+    cp -r ~/templates/c ./$NAME # Copy the template C file.
+    cd $NAME
+    mark; # Bookmark new project.
+
+# Create a new C# project with dotnet.
+elif [[ $LANG == "c-sharp" ]]; then
+    mkdir $NAME
+    cd $NAME
+    mark; # Bookmark new project.
+    dotnet new console # Create a new console app with dotnet.
+
+# Create a new Java project with Gradle.
+elif [[ $LANG == "java" ]]; then
+    mkdir $NAME;
+    cd $NAME;
+    mark; # Bookmark new project.
+    gradle init
+
+# Create a new HTML, CSS, JS project.
+elif [[ $LANG == "html" ]]; then
+    mkdir $NAME;
+    cd $NAME;
+
+    cp -r ~/templates/web/public_html .
+    cd public_html;
+    mark; # Bookmark new project.
+
+elif [[ $LANG == "js" ]]; then
+    mkdir $NAME;
+    cd $NAME;
+
+    touch main.js;
+    mark; # Bookmark new project.
+fi
+
+# If the user indicated the project will be a Git project, then run the ginit script.
+if [[ $GIT == "-g" || $GIT == "--git-project" ]]; then
+    ginit;
+fi
