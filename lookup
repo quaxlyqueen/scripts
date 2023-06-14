@@ -1,16 +1,6 @@
 #!/bin/zsh
-
-# Catch any invalid input.
-if [[ $# -eq 0 || $# -gt 2 ]]; then
-    echo "Improper usage: lookup [command] [search term]"
-    echo "Available commands:"
-    echo "      user [user]"
-    echo "          eg. lookup user quaxlyqueen"
-    echo "      repo [user] [repo]"
-    echo "          eg. lookup repo quaxlyqueen/dnd"
-
 # Display help.
-elif [[ $1 == "-h" || $1 == "--help" ]]; then
+if [[ $1 == "-h" || $1 == "--help" ]]; then
     echo "Available commands:"
     echo "      user [user]"
     echo "          eg. lookup user quaxlyqueen"
@@ -28,4 +18,14 @@ elif [[ $1 == "repo" ]]; then
     
     # TODO need to implement.
     firefox https://github.com/$2
+
+# Catch any invalid input.
+else 
+    echo "Improper usage: lookup [command] [search term]"
+    echo "Available commands:"
+    echo "      user [user]"
+    echo "          eg. lookup user quaxlyqueen"
+    echo "      repo [user] [repo]"
+    echo "          eg. lookup repo quaxlyqueen/dnd"
+
 fi
