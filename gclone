@@ -51,12 +51,8 @@ elif [[ $1 == "--set-default" ]]; then
 # Clone a git repo from a specified owner.
 elif [[ $1 =~ "/" ]]; then
     git clone https://github.com/$1
-    REPO=`cut $1 -d "/" -f 2`
 
 # Clone a git repo from the owner. By default, this will be the owner quaxlyqueen.
 else
     git clone https://github.com/$DEFAULT_USER/$1
-    REPO=$1
 fi
-
-cd $REPO
