@@ -3,10 +3,10 @@
 # Catch any input that is invalid.
 if [[ $# -eq 0  || $# -gt 1 ]]; then
     echo "\nImproper usage. Try:"
-    echo "\ngit-push [ \"message\" | -h | --help ]"
-    echo "      git-push \"init commit\""
-    echo "      git-push -h"
-    echo "      git-push --help"
+    echo "\ngpush [ \"message\" | -h | --help ]"
+    echo "      gpush \"init commit\""
+    echo "      gpush -h"
+    echo "      gpush --help"
 
     exit
 
@@ -17,9 +17,9 @@ elif [[ $1 == "-h" || $1 == "--help" ]]; then
 
     echo "\n\nUsage:"
     echo "\ngit-push [ \"message\" | -h | --help ]"
-    echo "      git-push \"init commit\""
-    echo "      git-push -h"
-    echo "      git-push --help"
+    echo "      gpush \"init commit\""
+    echo "      gpush -h"
+    echo "      gpush --help"
 
     exit
 

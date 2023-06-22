@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# Usage: mark [-ls] [-rm number] [-rm number TO number]
-# Creates a bookmark of the current directory, displays a list of bookmarks if the -ls option is provided
 BOOKMARKS_FILE=~/.bookmarks
 
-# Catch case where there are too many arguments.
+# Catch any invalid input.
 if [[ $# -gt 1 ]]; then
-    echo "Proper usage: mark [ -ls | -rm [ keyword ] ]"
+    echo "Improper usage: mark { -ls | -rm [ keyword ] }"
     echo "      eg. mark"
     echo "      eg. mark -ls"
     echo "      eg. mark -rm portfolio"
@@ -22,7 +20,8 @@ elif [[ $1 == "-h" || $1 == "--help" ]]; then
     echo "      mark"
     echo "      mark -ls"
     echo "          eg. run main"
-    echo "      mark -rm"
+    echo "      mark -rm [ keyword ]"
+    echo "          eg. mark -rm portfolio"
     echo "      mark -h"
     echo "      mark --help"
 
