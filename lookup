@@ -12,13 +12,12 @@ if [[ $1 == "-h" || $1 == "--help" ]]; then
 
 # Lookup a user.
 elif [[ $1 == "user" ]]; then
-    firefox https://github.com/$2
+    firefox "https://github.com/search?q=$2&type=users"
 
 # Lookup a repo.
 elif [[ $1 == "repo" ]]; then
     
-    # TODO need to implement.
-    firefox https://github.com/$2
+    firefox "https://github.com/search?q=$2&type=repositories"
 
 # Catch any invalid input.
 else 
