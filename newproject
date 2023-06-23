@@ -103,7 +103,7 @@ elif [[ $LANG == "java" ]]; then
     mkdir $NAME;
     cd $NAME;
     mark; # Bookmark new project.
-    gradle init
+    gradle7 init
 
 # Create a new HTML, CSS, JS project.
 elif [[ $LANG == "html" ]]; then

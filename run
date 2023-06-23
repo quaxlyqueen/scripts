@@ -8,6 +8,7 @@ if [[ $# -gt 1 ]]; then
     echo "Proper usage: run {file}"
     echo "      eg. run"
     echo "      eg. run main"
+    echo "      eg. run --gradle"
     echo "      eg. run -h"
     echo "      eg. run --help"
 
@@ -24,6 +25,7 @@ elif [[ $1 == "-h" || $1 == "--help" ]]; then
     echo "      run"
     echo "      run [filename]"
     echo "          eg. run main"
+    echo "      run --gradle"
     echo "      run -h"
     echo "      run --help\n"
     echo "Supported languages: $TYPES"
@@ -104,12 +106,12 @@ elif [[ $TYPE == "cs" ]]; then
 # Run Java app.
 elif [[ $TYPE == "java" ]]; then
     clear
-    CP=.:../lib/*
     echo "Compiling..."
         javac -cp $CP *.java
     echo "Output...";
         java -cp $CP $NAME $ARGS
         rm *.class
+
 
 # Run JavaScript app.
 elif [[ $TYPE == "js" ]]; then
@@ -125,6 +127,12 @@ elif [[ $TYPE == "go" ]]; then
     echo "Output..."
       ./discordo #TODO: need to dynamically obtain the newly created object file to run and then delete
       rm discordo
+
+# Run app through Gradle
+elif [[ $1 == "--gradle" ]]; then
+    clear;
+    echo "Output..."
+    ./gradlew run
 
 else
     read "?Language is not supported. Create a GH issue (y/n, default y): " GH
