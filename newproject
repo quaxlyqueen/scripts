@@ -86,8 +86,9 @@ fi
 
 # Create a new C project.
 if [[ $LANG == "c" ]]; then
-    cp -r ~/templates/c ./$NAME # Copy the template C file.
+    mkdir $NAME
     cd $NAME
+    cp -r ~/templates/c/main.c . # Copy the template C file.
     mark; # Bookmark new project.
 
 # Create a new C# project with dotnet.

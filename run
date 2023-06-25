@@ -95,6 +95,8 @@ if [[ $TYPE == "c" ]]; then
     echo "Output..."
         ./a.out $ARGS
 
+    rm a.out
+
 # Run C# app.
 elif [[ $TYPE == "cs" ]]; then
     clear
