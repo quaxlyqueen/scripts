@@ -1,0 +1,13 @@
+#!/bin/zsh
+
+firefox https://archlinux.org;
+
+read "?Ok to update (y/n, default y): " OK
+
+if [[ $OK == "y" || $OK == "" ]]; then
+    echo "starting update..."
+    sudo pacman -Syu;
+    echo "finishing update..."
+else
+    echo "abandoning update."
+fi

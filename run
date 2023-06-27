@@ -1,14 +1,15 @@
 #!/bin/zsh
 
 # Supported languages.
-TYPES=("c", "cs", "java", "js", "python", "go")
+TYPES=("c", "cs", "java", "js", "python", "flutter", "gradle", "go")
 
 # Catch case where there are too many arguments.
 if [[ $# -gt 1 ]]; then
     echo "Proper usage: run {file}"
     echo "      eg. run"
     echo "      eg. run main"
-    echo "      eg. run --gradle"
+    echo "      eg. run gradle"
+    echo "      eg. run flutter"
     echo "      eg. run -h"
     echo "      eg. run --help"
 
@@ -16,7 +17,7 @@ if [[ $# -gt 1 ]]; then
 
 # Help page
 elif [[ $1 == "-h" || $1 == "--help" ]]; then
-    echo "\nAbstracting away command line tools to compile and run code for various languages."
+    echo "\nAbstracting away command line tools to compile and run code for various languages and frameworks."
     echo "User can use with or without an argument file, the filetype is not needed."
     echo "With no arguments, 'run' will list available (and supported) files."
     echo "Additionally, 'run' prompts for and passes command line arguments for a program.\n"
@@ -25,7 +26,8 @@ elif [[ $1 == "-h" || $1 == "--help" ]]; then
     echo "      run"
     echo "      run [filename]"
     echo "          eg. run main"
-    echo "      run --gradle"
+    echo "      run gradle"
+    echo "      run flutter"
     echo "      run -h"
     echo "      run --help\n"
     echo "Supported languages: $TYPES"
@@ -137,10 +139,16 @@ elif [[ $TYPE == "go" ]]; then
       rm discordo
 
 # Run app through Gradle
-elif [[ $1 == "--gradle" ]]; then
+elif [[ $1 == "gradle" ]]; then
     clear;
     echo "Output..."
     ./gradlew run
+
+# Run app through Flutter
+elif [[ $1 == "flutter" ]]; then
+    clear;
+    echo "Output..."
+    flutter run
 
 else
     read "?Language is not supported. Create a GH issue (y/n, default y): " GH
