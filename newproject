@@ -8,7 +8,7 @@
 #     quaxlyqueen/scripts/ginit
 
 # Supported languages.
-TYPES=("c", "c-sharp", "java", "js", "python", "go")
+TYPES=("c", "c-sharp", "java", "js", "t3", "python", "flutter", "go")
 
 # Catch case where there are too many arguments.
 if [[ $# -gt 3 ]]; then     
@@ -22,7 +22,7 @@ if [[ $# -gt 3 ]]; then
     echo "      newproject -h"
     echo "      newproject --help\n"
 
-    echo "Supported languages: $TYPES"
+    echo "Supported languages/stacks: $TYPES"
 
     exit
 
@@ -44,7 +44,7 @@ elif [[ $1 == "-h" || $1 == "--help" ]]; then
     echo "      newproject -h"
     echo "      newproject --help\n"
 
-    echo "Supported languages: $TYPES"
+    echo "Supported languages/stacks: $TYPES"
 
     exit
 
@@ -103,7 +103,7 @@ elif [[ $LANG == "java" ]]; then
     mkdir $NAME;
     cd $NAME;
     mark; # Bookmark new project.
-    gradle7 init
+    gradle init
 
 # Create a new HTML, CSS, JS project.
 elif [[ $LANG == "html" ]]; then
@@ -130,6 +130,13 @@ elif [[ $LANG == "python" ]]; then
     touch main.py;
     echo "print(\"hello world!\")" >> main.py;
     mark;
+
+# Create a new Flutter/Dart project.
+elif [[ $LANG == "flutter" ]]; then
+    flutter create $NAME
+    cd $NAME
+    mark;
+
 fi
 
 # If the user indicated the project will be a Git project, then run the ginit script.

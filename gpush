@@ -1,10 +1,12 @@
 #!/bin/zsh
 
 # Catch any input that is invalid.
-if [[ $# -eq 0  || $# -gt 1 ]]; then
+if [[ $# -eq 0  || ($# -gt 1 && ( $1 != "-l" || $1 != "--local" )) ]]; then
     echo "\nImproper usage. Try:"
     echo "\ngpush [ \"message\" | -h | --help ]"
     echo "      gpush \"init commit\""
+    echo "      gpush -l \"init commit\""
+    echo "      gpush --local \"init commit\""
     echo "      gpush -h"
     echo "      gpush --help"
 
@@ -18,10 +20,17 @@ elif [[ $1 == "-h" || $1 == "--help" ]]; then
     echo "\n\nUsage:"
     echo "\ngit-push [ \"message\" | -h | --help ]"
     echo "      gpush \"init commit\""
+    echo "      gpush -l \"init commit\""
+    echo "      gpush --local \"init commit\""
     echo "      gpush -h"
     echo "      gpush --help"
 
     exit
+
+# Commit changes to local repository.
+elif [[ $1 == "-l" || $1 == "--local" ]]; then
+    git stage -A
+    git commit -m "$2"
 
 # Push changes to remote repository.
 else
