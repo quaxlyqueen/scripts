@@ -1,25 +1,22 @@
 #!/bin/zsh
 
-TARGET_FILE=~/.config/xob/brightness
-PIPE=~/.config/xob/xobpipe
-OLDNUM=`cut -f1 $TARGET_FILE`
-
-tail -f $PIPE | xob -s brightness &
-if [[ $# -eq 0 ]]; then
-  NEWNUM=`expr $OLDNUM + 5`
-elif [[ $# -eq 1 ]]; then
-  NEWNUM=$1
-elif [[ $# -eq 2 ]]; then
-  if [[ $1 -eq "--decrease" ]]; then
-    CHANGE=`expr 0 - $2`
-  elif [[ $1 -eq "--increase" ]]; then
-    CHANGE=$2
-  fi
-  NEWNUM=`expr $OLDNUM + $CHANGE`
+tail -f ~/.config/xob/xobpipe | xob -s volume &
+if [[ $# -eq 2 ]]; then
+  CHANGE=$1
+  TARGET_FILE=$2
+elif [[ $# -eq 3 ]]; then
+  CHANGE=`expr 0 - $2`
+  TARGET_FILE=$3
+else
+  echo "Improper usage. To increase a value in a file,\nupdate-bl [change] [target_file]."
+  echo "To decrease a value in a file,\nupdate-bl --decrease [change] [target_file]."
 fi
+
+OLDNUM=`cut -f1 $TARGET_FILE`
+NEWNUM=`expr $OLDNUM + $CHANGE`
 
 if [[ $NEWNUM -le 100 && $NEWNUM -ge 0 ]]; then
   sed -i "s/$OLDNUM/$NEWNUM/g" $TARGET_FILE
   brightnessctl set $NEWNUM%
-  echo $NEWNUM >> $PIPE
+  echo $NEWNUM >> ~/.config/xob/xobpipe
 fi

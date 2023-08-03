@@ -42,7 +42,9 @@ void validateDir(char input[]) {
             printf("cwd: %s\n", cwd);
         }
         chdir("..");
-        printf("cwd: %s", cwd);
+        if(getcwd(cwd, sizeof(cwd)) != NULL) {
+            printf("cwd: %s\n", cwd);
+        }
     }
 }
 

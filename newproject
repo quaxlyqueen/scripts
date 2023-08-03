@@ -8,7 +8,7 @@
 #     quaxlyqueen/scripts/ginit
 
 # Supported languages.
-TYPES=("c", "c-sharp", "java", "js", "t3", "python", "flutter", "go")
+TYPES=("c", "rust", "c-sharp", "java", "js", "t3", "python", "flutter", "go")
 
 # Catch case where there are too many arguments.
 if [[ $# -gt 3 ]]; then     
@@ -91,6 +91,15 @@ if [[ $LANG == "c" ]]; then
     cp -r ~/templates/c/main.c . # Copy the template C file.
     mark; # Bookmark new project.
 
+# Create a new Rust project.
+elif [[ $LANG == "rust" ]]; then
+    read "?Is this an Arduino project? (y/N): " ARDUINO
+    if [[ $ARDUINO == "y" ]]; then
+        cargo generate --git https://github.com/Rahix/avr-hal-template.git
+    else
+        cargo new $NAME
+    fi
+
 # Create a new C# project with dotnet.
 elif [[ $LANG == "c-sharp" ]]; then
     mkdir $NAME
@@ -136,6 +145,10 @@ elif [[ $LANG == "flutter" ]]; then
     flutter create $NAME
     cd $NAME
     mark;
+
+# Create a new t3 web app.
+elif [[ $LANG == "t3" ]]; then
+    npm create t3-app@latest
 
 fi
 

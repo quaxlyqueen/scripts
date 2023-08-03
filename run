@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Supported languages.
-TYPES=("c", "cs", "java", "js", "python", "flutter", "gradle", "go")
+TYPES=("c", "rs", "cs", "java", "js", "python", "flutter", "gradle", "go")
 
 # Catch case where there are too many arguments.
 if [[ $# -gt 1 ]]; then
@@ -98,6 +98,11 @@ if [[ $TYPE == "c" ]]; then
         ./a.out $ARGS
 
     rm a.out
+
+# Run a Rust app.
+elif [[ $TYPE == "rs" ]]; then
+    clear
+    cargo run
 
 # Run C# app.
 elif [[ $TYPE == "cs" ]]; then
