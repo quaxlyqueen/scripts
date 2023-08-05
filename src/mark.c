@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     // Append the current directory to the bookmarks file.
     else if(argc == 1) {
         char cwd[PATH_MAX];
-        fprintf(f, "%s", getcwd(cwd, sizeof(cwd)));
+        fprintf(f, "\n%s", getcwd(cwd, sizeof(cwd)));
         printf("Successfully bookmarked %s.", cwd);
     }
 

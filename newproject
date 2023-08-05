@@ -137,7 +137,6 @@ elif [[ $LANG == "python" ]]; then
     cd $NAME;
 
     touch main.py;
-    echo "print(\"hello world!\")" >> main.py;
     mark;
 
 # Create a new Flutter/Dart project.
