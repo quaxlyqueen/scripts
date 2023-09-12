@@ -116,11 +116,10 @@ elif [[ $TYPE == "cs" ]]; then
 elif [[ $TYPE == "java" ]]; then
     clear
     echo "Compiling..."
-        javac -cp $CP *.java
+        javac *.java
     echo "Output...";
-        java -cp $CP $NAME $ARGS
+        java $NAME $ARGS
         rm *.class
-
 
 # Run JavaScript app.
 elif [[ $TYPE == "js" ]]; then

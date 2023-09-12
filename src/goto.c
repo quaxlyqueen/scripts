@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <stdlib.h>
 
+/*
 void error() {
     printf("\nImproper usage: goto[ keyword ]\n"
            "    Usage:\n"
@@ -25,7 +26,7 @@ void help() {
             "       goto --help"
             );
 }
-
+*/
 void validateDir(char input[]) {
     //char * bookmarksFile = strcat(getenv("HOME"), "/.bookmarks");
     char * bookmarksFile = "/home/jashton/.bookmarks";
@@ -41,9 +42,18 @@ void validateDir(char input[]) {
         if(getcwd(cwd, sizeof(cwd)) != NULL) {
             printf("cwd: %s\n", cwd);
         }
-        chdir("..");
-        if(getcwd(cwd, sizeof(cwd)) != NULL) {
-            printf("cwd: %s\n", cwd);
+
+        char *line = NULL;
+        size_t len = 0;
+        ssize_t read;
+
+        while((read = getline(&line, &len, f)) != -1) {
+            printf("%s", line);
+            if(strstr(line, input) != NULL) {
+                printf("%s", line);
+                chdir(line);
+                return;
+            }
         }
     }
 }
@@ -52,11 +62,12 @@ int main(int argc, char *argv[]) {
 
     // Invalid number of arguments.
     if(argc != 2) {
-        error();
+        //error();
+        printf("error");
         return 1;
     }
 
     // Display help.
-    else if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) help();
+    else if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) printf("help");
     else validateDir(argv[1]);
 }

@@ -8,7 +8,7 @@
 #     quaxlyqueen/scripts/ginit
 
 # Supported languages.
-TYPES=("c", "rust", "c-sharp", "java", "js", "t3", "python", "flutter", "go")
+TYPES=("c", "rust", "c-sharp", "aspnet", "java", "js", "t3", "python", "flutter", "go")
 
 # Catch case where there are too many arguments.
 if [[ $# -gt 3 ]]; then     
@@ -106,6 +106,14 @@ elif [[ $LANG == "c-sharp" ]]; then
     cd $NAME
     mark; # Bookmark new project.
     dotnet new console # Create a new console app with dotnet.
+
+# Create a new ASP.NET project.
+elif [[ $LANG == "aspnet" ]]; then
+    dotnet new globaljson --output $NAME
+    dotnet new mvc --no-https $NAME
+    dotnet new sln -o $NAME
+    dotnet sln $NAME add $NAME
+    cd $NAME
 
 # Create a new Java project with Gradle.
 elif [[ $LANG == "java" ]]; then

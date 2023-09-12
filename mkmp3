@@ -1,0 +1,16 @@
+#!/bin/zsh
+
+TARGET=$1
+
+if [[ -e $TARGET.mkv ]]; then
+    ffmpeg -i $TARGET.mkv -n $TARGET.mp3
+    rm $TARGET.mkv
+elif [[ -e $TARGET.webm ]]; then
+    ffmpeg -i $TARGET.webm -n $TARGET.mp3
+    rm $TARGET.webm
+elif [[ -e $TARGET.mp4 ]]; then
+    ffmpeg -i $TARGET.mp4 -n $TARGET.mp3
+    rm $TARGET.mp4
+else
+    echo "file not found"
+fi
