@@ -110,7 +110,7 @@ elif [[ $LANG == "c-sharp" ]]; then
 # Create a new ASP.NET project.
 elif [[ $LANG == "aspnet" ]]; then
     dotnet new globaljson --output $NAME
-    dotnet new mvc --no-https $NAME
+    dotnet new web --no-https --output $NAME
     dotnet new sln -o $NAME
     dotnet sln $NAME add $NAME
     cd $NAME

@@ -1,0 +1,2 @@
+#!/bin/zsh
+xrandr --auto --output DP1 --mode 2560x1440
