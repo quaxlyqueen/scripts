@@ -1,8 +1,11 @@
 #!/bin/zsh
 
 git init
-gh repo create 
 
 git stage -A
 git commit -m "init commit"
-git push --set-upstream origin main
+
+if [[ $1 != "-l" || $1 != "--local" ]]; then
+    gh repo create 
+    git push --set-upstream origin main
+fi
