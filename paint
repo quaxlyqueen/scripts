@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+python ~/dev/research/python.playground/gui/canvas.py

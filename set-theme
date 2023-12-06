@@ -1,0 +1,20 @@
+#!/bin/zsh
+
+# Get the current theme
+theme=$(cat ~/.config/theme/active.theme)
+
+# Apply the theme
+base=$(echo $theme | grep -oP '(?<=base=).*')
+accent=$(echo $theme | grep -oP '(?<=accent=).*')
+hover=$(echo $theme | grep -oP '(?<=hover=).*')
+
+sed -i "s/color=\(.*\)/color=$hover/g" ~/.config/i3blocks/i3blocks.conf
+
+sed -i "s/set \$base .*/set \$base $base/g" ~/.config/i3/config
+sed -i "s/set \$accent .*/set \$accent $accent/g" ~/.config/i3/config
+sed -i "s/set \$hover .*/set \$hover $hover/g" ~/.config/i3/config
+
+
+
+# Reload i3
+i3-msg restart
