@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Catch any input that is invalid.
-if [[ $# -eq 0  || ($# -gt 1 && ( $1 != "-l" || $1 != "--local" )) ]]; then
+if [[ $# -eq 0 ]]; then
     echo "\nImproper usage. Try:"
     echo "\ngpush [ \"message\" | -h | --help ]"
     echo "      gpush \"init commit\""
