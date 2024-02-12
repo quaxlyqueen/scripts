@@ -81,4 +81,4 @@ CHANGE=$(get_change "$2")
 # Set up xob
 tail -f ~/.config/xob/xobpipe | xob -s $TARGET &
 
-update "$CHANGE" "$TARGET"
+update "$CHANGE" "$TARGET" &
