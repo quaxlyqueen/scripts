@@ -1,5 +1,6 @@
 #!/bin/zsh
 COMMAND=$1
+PACKAGE=$2
 
 error() {
     echo "Your package manager is not supported."
@@ -16,22 +17,22 @@ then
         DISTRO=$(cat /etc/os-release | grep -oP '(?<=^ID=).+' | tr -d '"')
 
         if [[ $DISTRO == "arch" ]]; then
-            sudo pacman -S $COMMAND
+            sudo pacman -S $PACKAGE
             exit 0
         elif [[ $DISTRO == "archarm" ]]; then
-            sudo pacman -S $COMMAND
+            sudo pacman -S $PACKAGE
             exit 0
         elif [[ $DISTRO == "ubuntu" ]]; then
-            sudo apt-get install $COMMAND
+            sudo apt-get install $PACKAGE
             exit 0
         elif [[ $DISTRO == "fedora" ]]; then
-            sudo dnf install $COMMAND
+            sudo dnf install $PACKAGE
             exit 0
         elif [[ $DISTRO == "centos" ]]; then
-            sudo yum install $COMMAND
+            sudo yum install $PACKAGE
             exit 0
         elif [[ $DISTRO == "debian" ]]; then
-            sudo apt install $COMMAND
+            sudo apt install $PACKAGE
             exit 0
         else
             error
@@ -42,11 +43,11 @@ then
 
         if command -v "brew" &> /dev/null
         then
-            brew install $COMMAND
+            brew install $PACKAGE
 
         elif command -v "port" &> /dev/null
         then
-            sudo port install $COMMAND
+            sudo port install $PACKAGE
 
         else
             echo "Homebrew or MacPorts not found. Please install one of them before running this script."
