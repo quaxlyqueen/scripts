@@ -1,6 +1,0 @@
-#!/bin/zsh
-
-TARGET=$1
-TRASH=/home/jashton/trash/
-
-mv $TARGET $TRASH

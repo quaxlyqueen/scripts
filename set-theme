@@ -1,20 +1,101 @@
 #!/bin/zsh
 
-# Get the current theme
-theme=$(cat ~/.config/theme/active.theme)
+# This script is used to apply a theme to i3
+# It takes zero or one argument, the name of the theme to apply or toggle between light and dark
+# The theme must be located in $THEME_DIR 
+# The theme must be a file with the extension .theme
+# The theme must be formatted as follows:
+# base=base_color
+# accent=accent_color
+# hover=hover_color
+# Where base_color, accent_color, and hover_color are hex values
+# The theme will be applied to i3, i3blocks, and rofi
 
-# Apply the theme
-base=$(echo $theme | grep -oP '(?<=base=).*')
-accent=$(echo $theme | grep -oP '(?<=accent=).*')
-hover=$(echo $theme | grep -oP '(?<=hover=).*')
+cd ~/.config/theme
+CURRENT_THEME=`stat active.theme | grep .theme | cut -d " " -f 6 | awk -F '/' '{print $NF}'`
 
-sed -i "s/color=\(.*\)/color=$hover/g" ~/.config/i3blocks/i3blocks.conf
+get_current_theme() {
+    if [ -f active.theme ]; then
+        CURRENT_THEME=`stat active.theme | grep .theme | cut -d " " -f 6 | awk -F '/' '{print $NF}'`
+    else
+        ln -sf dark.theme active.theme
+    fi
+}
 
-sed -i "s/set \$base .*/set \$base $base/g" ~/.config/i3/config
-sed -i "s/set \$accent .*/set \$accent $accent/g" ~/.config/i3/config
-sed -i "s/set \$hover .*/set \$hover $hover/g" ~/.config/i3/config
+set_theme() {
+    get_current_theme
+    # Get the theme
+    theme=$(cat active.theme)
 
+    # Apply the theme
+    base=$(echo $theme | grep -oP '(?<=base=).*')
+    accent=$(echo $theme | grep -oP '(?<=accent=).*')
+    hover=$(echo $theme | grep -oP '(?<=hover=).*')
+    mode=$(echo $CURRENT_THEME | cut -d '.' -f 1)
 
+    # Set i3 themes
+    sed -i "s/color=\(.*\)/color=$hover/g" ~/.config/i3blocks/i3blocks.conf
+    sed -i "s/set \$base .*/set \$base $base/g" ~/.config/i3/config
+    sed -i "s/set \$accent .*/set \$accent $accent/g" ~/.config/i3/config
+    sed -i "s/set \$hover .*/set \$hover $hover/g" ~/.config/i3/config
 
-# Reload i3
-i3-msg restart
+    # Apply active.theme to alacritty
+    ALACRITTY=~/.config/alacritty
+    sed -i "s/themes\/.*\.toml/themes\/$mode.toml/g" $ALACRITTY/alacritty.toml
+
+    # Apply active.theme to rofi
+    ROFI_PATH=theme.rasi
+    sed -i "s/base\: .*/base: $base\;/" $ROFI_PATH
+    sed -i "s/accent\: .*/accent: $accent\;/" $ROFI_PATH
+    sed -i "s/hover\: .*/hover: $hover\;/" $ROFI_PATH
+
+    # Set NeoVim theme
+    NVIM_PATH=~/.config/nvim/after/plugin/colors.lua
+    if [[ $mode == "light" ]]; then
+        sed -i "s/photon/antiphoton/" $NVIM_PATH
+        sed -i "s/guibg=#262940/guibg=#C6CAED/" $NVIM_PATH
+        sed -i "s/fg='#C6CAED'/fg='#262940'/" $NVIM_PATH
+    else
+        sed -i "s/anti//" $NVIM_PATH
+        sed -i "s/guibg=#C6CAED/guibg=#262940/" $NVIM_PATH
+        sed -i "s/fg='#262940'/fg='#C6CAED'/" $NVIM_PATH
+    fi
+
+    i3-msg restart
+}
+
+# If no argument is given, toggle between light and dark
+if [ $# -eq 0 ]; then
+    if [[ $CURRENT_THEME == "light.theme" ]]; then
+        ln -sf dark.theme active.theme
+    else
+        ln -sf light.theme active.theme
+    fi
+
+    set_theme
+
+elif [ $# -gt 1 ]; then
+    echo "Too many arguments"
+    exit 1
+
+else
+    # Check if the theme exists
+    if [ ! -f $1.theme ]; then
+        echo "Theme $1 does not exist"
+        exit 1
+    fi
+
+    # Check if the theme is already applied
+    if [ -f active.theme ]; then
+        if [[ $(cat active.theme) == $(cat $1.theme) ]]; then
+            echo "Theme $1 is already applied"
+            exit 1
+        else
+            ln -sf $1.theme active.theme
+        fi
+    else
+        ln -sf $1.theme active.theme
+    fi
+
+    set_theme
+fi

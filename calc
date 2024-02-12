@@ -1,4 +1,0 @@
-#!/bin/zsh
-
-source ~/dev/calculator/bin/activate
-python ~/dev/calculator/calculator.py
