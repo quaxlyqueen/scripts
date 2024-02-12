@@ -1,4 +1,12 @@
 #!/bin/zsh
+
+if [[ $# -ne 2 ]]; then
+    echo "Usage: $0 <command> <package>"
+    echo "Checks if a command is installed and if not, installs the package."
+    echo "Supported package managers: apt, pacman, dnf, yum, brew, port"
+    exit 1
+fi
+
 COMMAND=$1
 PACKAGE=$2
 
@@ -12,7 +20,7 @@ error() {
 if ! command -v $COMMAND &> /dev/null
 then
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        echo "$COMMAND not found. Installing $COMMAND..."
+        echo "$COMMAND not found. Installing $PACKAGE..."
 
         DISTRO=$(cat /etc/os-release | grep -oP '(?<=^ID=).+' | tr -d '"')
 
@@ -57,5 +65,5 @@ then
         error
     fi
 else
-    echo "$COMMAND is already installed."
+    echo "Package $PACKAGE which provides the command $COMMAND, is already installed."
 fi
