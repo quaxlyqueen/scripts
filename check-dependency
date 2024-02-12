@@ -1,0 +1,60 @@
+#!/bin/zsh
+COMMAND=$1
+
+error() {
+    echo "Your package manager is not supported."
+    echo "$COMMAND could not be installed automatically."
+    echo "Please install $COMMAND manually before running this script."
+    exit 1
+}
+
+if ! command -v $COMMAND &> /dev/null
+then
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        echo "$COMMAND not found. Installing $COMMAND..."
+
+        DISTRO=$(cat /etc/os-release | grep -oP '(?<=^ID=).+' | tr -d '"')
+
+        if [[ $DISTRO == "arch" ]]; then
+            sudo pacman -S $COMMAND
+            exit 0
+        elif [[ $DISTRO == "archarm" ]]; then
+            sudo pacman -S $COMMAND
+            exit 0
+        elif [[ $DISTRO == "ubuntu" ]]; then
+            sudo apt-get install $COMMAND
+            exit 0
+        elif [[ $DISTRO == "fedora" ]]; then
+            sudo dnf install $COMMAND
+            exit 0
+        elif [[ $DISTRO == "centos" ]]; then
+            sudo yum install $COMMAND
+            exit 0
+        elif [[ $DISTRO == "debian" ]]; then
+            sudo apt install $COMMAND
+            exit 0
+        else
+            error
+        fi
+
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "Command not found. Installing $COMMAND..."
+
+        if command -v "brew" &> /dev/null
+        then
+            brew install $COMMAND
+
+        elif command -v "port" &> /dev/null
+        then
+            sudo port install $COMMAND
+
+        else
+            echo "Homebrew or MacPorts not found. Please install one of them before running this script."
+            exit 1
+        fi
+    else
+        error
+    fi
+else
+    echo "$COMMAND is already installed."
+fi
