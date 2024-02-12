@@ -17,8 +17,7 @@ if [[ $# -eq 0 || $# -gt 1 ]]; then
 
 # Display help.
 elif [[ $1 == "-h" || $1 == "--help" ]]; then
-    echo "\nImproper usage. Try:"
-    echo "\ngoto [keyword]"
+    echo "goto [keyword]"
     echo "      goto downloads"
     echo "      goto school"
     echo "      goto portfolio"
