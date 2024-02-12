@@ -1,0 +1,84 @@
+#!/bin/zsh
+
+error() {
+    echo "Improper usage. To increase a value in a file, update [target_file] {+, -}[change]."
+    echo "For example, to increase the volume by 5, use 'update volume +5'."
+    echo "To decrease the brightness by 10, use 'update brightness -10'."
+    exit 1
+}
+
+# Set up target file
+get_target() {
+    TARGET=$1
+
+    if [[ $TARGET == "volume" ]]; then
+      echo "/home/jashton/.config/xob/volume"
+
+    elif [[ $TARGET == "brightness" ]]; then
+      echo "/home/jashton/.config/xob/brightness"
+
+    else
+        echo "Invalid target. Please use 'volume' or 'brightness'."
+        error
+        exit 1
+    fi
+}
+
+# Format change
+get_change() {
+    CHANGE=$1
+
+    if [[ $CHANGE[1] == "+" ]]; then
+        echo $CHANGE[2,-1]
+        return ${CHANGE[2,-1]}
+    elif [[ $CHANGE[1] == "-" ]]; then
+        echo -$CHANGE[2,-1]
+        return -${CHANGE[2,-1]}
+    else
+        echo "Invalid change. Please use '+' or '-'."
+        error
+    fi
+}
+
+update() {
+    CHANGE=$1
+    TARGET=$2
+    TARGET_FILE=$(get_target "$TARGET")
+
+    OLDNUM=`head $TARGET_FILE`
+    NEWNUM=`expr $OLDNUM + $CHANGE`
+
+    if [[ $NEWNUM -le 100 && $NEWNUM -ge 0 ]]; then
+        sed -i "s/$OLDNUM/$NEWNUM/g" $TARGET_FILE
+
+        if [[ $TARGET == "volume" ]]; then
+            pamixer --set-volume $NEWNUM%
+
+        elif [[ $TARGET == "brightness" ]]; then
+            brightnessctl set $NEWNUM%
+
+        else
+            echo "Invalid target. Please use 'volume' or 'brightness'."
+            error
+        fi
+
+        echo $NEWNUM >> ~/.config/xob/xobpipe
+        exit 0
+    else
+        echo "Invalid value. Please use a number between 0 and 100."
+        exit 1
+    fi
+}
+
+# Check for proper number of arguments
+if [[ $# -ne 2 ]]; then
+    error
+fi
+
+TARGET=$1
+CHANGE=$(get_change "$2")
+
+# Set up xob
+tail -f ~/.config/xob/xobpipe | xob -s $TARGET &
+
+update "$CHANGE" "$TARGET"
