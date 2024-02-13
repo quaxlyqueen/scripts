@@ -13,4 +13,48 @@ echo "export PATH=$PATH:/usr/local/bin" >> ~/.zshrc
 
 # Install the dependencies
 echo "Installing dependencies..."
+
 # Install github-cli
+if ! command -v "gh" &> /dev/null
+then
+    echo "gh not found. Installing gh..."
+    COMMAND="gh"
+    PACKAGE="github-cli"
+
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+
+        DISTRO=$(cat /etc/os-release | grep -oP '(?<=^ID=).+' | tr -d '"')
+
+        if [[ $DISTRO == "arch" ]]; then
+            yes | sudo pacman -S $PACKAGE
+        elif [[ $DISTRO == "archarm" ]]; then
+            yes | sudo pacman -S $PACKAGE
+        elif [[ $DISTRO == "ubuntu" ]]; then
+            yes | sudo apt-get install $PACKAGE
+        elif [[ $DISTRO == "fedora" ]]; then
+            yes | sudo dnf install $PACKAGE
+        elif [[ $DISTRO == "centos" ]]; then
+            yes | sudo yum install $PACKAGE
+        elif [[ $DISTRO == "debian" ]]; then
+            yes | sudo apt install $PACKAGE
+        else
+            echo "Unsupported distro. Please install $COMMAND from $PACKAGE manually."
+        fi
+
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "gh not found. Installing gh..."
+
+        if command -v "brew" &> /dev/null
+        then
+            yes | brew install $COMMAND
+
+        elif command -v "port" &> /dev/null
+        then
+            yes | sudo port install $COMMAND
+
+        else
+            echo "Homebrew or MacPorts not found. Please install one of them before running this script."
+            exit 1
+        fi
+    fi
+fi
