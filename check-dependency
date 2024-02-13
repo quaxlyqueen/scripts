@@ -20,21 +20,27 @@ install() {
 
             if [[ $DISTRO == "arch" ]]; then
                 yes | sudo pacman -S $PACKAGE
+                yes | sudo pacman -S $COMMAND
                 exit 0
             elif [[ $DISTRO == "archarm" ]]; then
                 yes | sudo pacman -S $PACKAGE
+                yes | sudo pacman -S $COMMAND
                 exit 0
             elif [[ $DISTRO == "ubuntu" ]]; then
                 yes | sudo apt-get install $PACKAGE
+                yes | sudo apt-get install $COMMAND
                 exit 0
             elif [[ $DISTRO == "fedora" ]]; then
                 yes | sudo dnf install $PACKAGE
+                yes | sudo dnf install $COMMAND
                 exit 0
             elif [[ $DISTRO == "centos" ]]; then
                 yes | sudo yum install $PACKAGE
+                yes | sudo yum install $COMMAND
                 exit 0
             elif [[ $DISTRO == "debian" ]]; then
                 yes | sudo apt install $PACKAGE
+                yes | sudo apt install $COMMAND
                 exit 0
             else
                 error
@@ -46,11 +52,12 @@ install() {
             if command -v "brew" &> /dev/null
             then
                 yes | brew install $PACKAGE
+                yes | brew install $COMMAND
 
             elif command -v "port" &> /dev/null
             then
                 yes | sudo port install $PACKAGE
-
+                yes | sudo port install $COMMAND
             else
                 echo "Homebrew or MacPorts not found. Please install one of them before running this script."
                 exit 1

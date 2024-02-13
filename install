@@ -1,7 +1,25 @@
 #!/bin/zsh
 
-# This is the intial install script for quaxlyqueen/scripts.
-# It will install the scripts and set up the environment.
+help() {
+    echo "This script installs and sets up the configuration for the repo quaxlyqueen/scripts."
+    echo "It will install the scripts in /usr/local/bin and set up the environment variables and aliases."
+    echo "The user will be prompted to:"
+    echo "  - Set up the environment variables and aliases"
+    echo "  - Create a theme for supported applications"
+    echo "  - Set up Git, github-cli (gh), and gclone"
+
+    echo "\nUsage: sudo ./install"
+    echo "       sudo ./install -h | --help"
+    exit 0
+}
+
+# The script must be run as root
+is_root() {
+    if [[ $EUID -ne 0 ]]; then
+        echo "This script must be run as root." 
+        exit 1
+    fi
+}
 
 create_theme() {
     USER=$1
@@ -12,8 +30,8 @@ create_theme() {
     echo "Supported applications will automatically use the active.theme link to theme themselves."
     echo "active.theme is a symbolic link to (for eg.) light.theme or dark.theme."
 
-    echo "\nMany themes can be created with this format, and using the `set-theme <theme>` command."
-    echo "See `set-theme --help` for more information."
+    echo "\nMany themes can be created with this format, and using the 'set-theme <theme>' command."
+    echo "See 'set-theme --help' for more information."
 
     echo "\n\nYou can create a theme now or use the default light and dark themes."
     read "?Do you want to create a theme now? (y/n) " CHOICE
@@ -33,7 +51,7 @@ create_theme() {
         su $USER -c "echo 'hover=$HOVER' >> $DIR/$NAME.theme"
 
         echo "Theme created successfully."
-        echo "You can now use the `set-theme $NAME` command to use this theme."
+        echo "You can now use the 'set-theme $NAME' command to use this theme."
         echo "Setting the active theme to $NAME.theme..."
         su $USER -c "ln -s $DIR/$NAME.theme $DIR/active.theme"
 
@@ -59,57 +77,12 @@ create_theme() {
     fi
 }
 
-install_gh() {
-    # Install github-cli
-    if ! command -v "gh" &> /dev/null
-    then
-        echo "gh not found. Installing gh..."
-        COMMAND="gh"
-        PACKAGE="github-cli"
-
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-
-            DISTRO=$(cat /etc/os-release | grep -oP '(?<=^ID=).+' | tr -d '"')
-
-            if [[ $DISTRO == "arch" ]]; then
-                yes | sudo pacman -S $PACKAGE
-            elif [[ $DISTRO == "archarm" ]]; then
-                yes | sudo pacman -S $PACKAGE
-            elif [[ $DISTRO == "ubuntu" ]]; then
-                yes | sudo apt-get install $PACKAGE
-            elif [[ $DISTRO == "fedora" ]]; then
-                yes | sudo dnf install $PACKAGE
-            elif [[ $DISTRO == "centos" ]]; then
-                yes | sudo yum install $PACKAGE
-            elif [[ $DISTRO == "debian" ]]; then
-                yes | sudo apt install $PACKAGE
-            else
-                echo "Unsupported distro. Please install $COMMAND from $PACKAGE manually."
-            fi
-
-        elif [[ "$OSTYPE" == "darwin"* ]]; then
-            echo "gh not found. Installing gh..."
-
-            if command -v "brew" &> /dev/null
-            then
-                yes | brew install $COMMAND
-
-            elif command -v "port" &> /dev/null
-            then
-                yes | sudo port install $COMMAND
-
-            else
-                echo "Homebrew or MacPorts not found. Please install one of them before running this script."
-            fi
-        fi
-    fi
-}
-
 setup_git() {
     # Set up gclone
     if [ ! -d "/home/$USER/.config/gclone" ]; then
         su $USER -c "mkdir /home/$USER/.config/gclone"
         su $USER -c "touch /home/$USER/.config/gclone/gclone.conf"
+
         read "?Please enter your GitHub user name for gclone: " GHUSER
         su $USER -c "gclone --set-default $GHUSER"
     fi
@@ -118,15 +91,19 @@ setup_git() {
     if [ ! -f "/home/$USER/.gitconfig" ]; then
         read "?Please enter your name for Git: " NAME
         read "?Please enter your email for Git: " EMAIL
+
         su $USER -c "git config --global user.name $NAME"
         su $USER -c "git config --global user.email $EMAIL"
     fi
 
+    # Install github-cli if it is not already installed
+    check_dependency "gh" "github-cli"
+
     # If the user has not set up github-cli, do so now
-    install_gh
     if [ ! -f "/home/$USER/.config/gh/hosts.yml" ]; then
         echo "Please log in to GitHub using github-cli."
         echo "This will allow you to modify your repositories and other GitHub features."
+
         su $USER -c "gh auth login"
     fi
 }
@@ -147,6 +124,9 @@ setup_environment() {
     echo "alias goto='. goto $1'" >> ~/.zshrc
     echo "export PATH=$PATH:$DIR" >> ~/.zshrc
 
+    # Source the .zshrc file to update the environment
+    source ~/.zshrc
+
     USER=$SUDO_USER
     if [ ! -d "/home/$USER/.config" ]; then
         su $USER -c "mkdir /home/$USER/.config"
@@ -160,12 +140,19 @@ setup_environment() {
     setup_git
 }
 
+is_root
+if [[ $# -eq 1 ]]; then
+    if [[ $1 == "-h" || $1 == "--help" ]]; then
+        help
+    fi
+fi
+
 # Install the scripts
 echo "Installing scripts..."
 sudo cp * /usr/local/bin
 setup_environment
 
-echo "Installation complete. Please restart your terminal to use the new commands, or run `source ~/.zshrc`."
+echo "Installation complete. Please restart your terminal to use the new commands, or run 'source ~/.zshrc'."
 echo "To remove the scripts, simply delete the files in /usr/local/bin and remove the aliases from your .zshrc file."
 echo "Thank you for using quaxlyqueen/scripts!"
 exit 0
