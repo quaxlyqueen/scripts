@@ -1,15 +1,5 @@
 #!/bin/zsh
 
-if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <command> <package>"
-    echo "Checks if a command is installed and if not, installs the package."
-    echo "Supported package managers: apt, pacman, dnf, yum, brew, port"
-    exit 1
-fi
-
-COMMAND=$1
-PACKAGE=$2
-
 error() {
     echo "Your package manager is not supported."
     echo "$COMMAND could not be installed automatically."
@@ -17,53 +7,93 @@ error() {
     exit 1
 }
 
-if ! command -v $COMMAND &> /dev/null
-then
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        echo "$COMMAND not found. Installing $PACKAGE..."
+install() {
+    COMMAND=$1
+    PACKAGE=$2
 
-        DISTRO=$(cat /etc/os-release | grep -oP '(?<=^ID=).+' | tr -d '"')
+    if ! command -v $COMMAND &> /dev/null
+    then
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            echo "$COMMAND not found. Installing $PACKAGE..."
 
-        if [[ $DISTRO == "arch" ]]; then
-            sudo pacman -S $PACKAGE
-            exit 0
-        elif [[ $DISTRO == "archarm" ]]; then
-            sudo pacman -S $PACKAGE
-            exit 0
-        elif [[ $DISTRO == "ubuntu" ]]; then
-            sudo apt-get install $PACKAGE
-            exit 0
-        elif [[ $DISTRO == "fedora" ]]; then
-            sudo dnf install $PACKAGE
-            exit 0
-        elif [[ $DISTRO == "centos" ]]; then
-            sudo yum install $PACKAGE
-            exit 0
-        elif [[ $DISTRO == "debian" ]]; then
-            sudo apt install $PACKAGE
-            exit 0
+            DISTRO=$(cat /etc/os-release | grep -oP '(?<=^ID=).+' | tr -d '"')
+
+            if [[ $DISTRO == "arch" ]]; then
+                sudo pacman -S $PACKAGE
+                exit 0
+            elif [[ $DISTRO == "archarm" ]]; then
+                sudo pacman -S $PACKAGE
+                exit 0
+            elif [[ $DISTRO == "ubuntu" ]]; then
+                sudo apt-get install $PACKAGE
+                exit 0
+            elif [[ $DISTRO == "fedora" ]]; then
+                sudo dnf install $PACKAGE
+                exit 0
+            elif [[ $DISTRO == "centos" ]]; then
+                sudo yum install $PACKAGE
+                exit 0
+            elif [[ $DISTRO == "debian" ]]; then
+                sudo apt install $PACKAGE
+                exit 0
+            else
+                error
+            fi
+
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            echo "$COMMAND not found. Installing $PACKAGE..."
+
+            if command -v "brew" &> /dev/null
+            then
+                brew install $PACKAGE
+
+            elif command -v "port" &> /dev/null
+            then
+                sudo port install $PACKAGE
+
+            else
+                echo "Homebrew or MacPorts not found. Please install one of them before running this script."
+                exit 1
+            fi
         else
             error
         fi
-
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "Command not found. Installing $COMMAND..."
-
-        if command -v "brew" &> /dev/null
-        then
-            brew install $PACKAGE
-
-        elif command -v "port" &> /dev/null
-        then
-            sudo port install $PACKAGE
-
-        else
-            echo "Homebrew or MacPorts not found. Please install one of them before running this script."
-            exit 1
-        fi
     else
-        error
+        echo "Package $PACKAGE which provides the command $COMMAND, is already installed."
+    fi
+}
+
+# If the number of arguments is not 2, print the usage
+if [[ $# -ne 2 ]]; then
+    echo "Usage: check-dependency <command> <package>"
+    echo "       check-dependency <--git> <user/repo>"
+    echo "Checks if a command is installed and if not, installs the package."
+    echo "If --git is specified, it will check if the git repository is executable."
+    echo "Supported package managers: apt, pacman, dnf, yum, brew, port"
+    exit 1
+fi
+
+COMMAND=$1
+PACKAGE=$2
+
+# If the command is git, we will clone the repository and install it
+if $COMMAND == "--git"; then
+    USER=$(echo $PACKAGE | cut -d'/' -f1)
+    REPO=$(echo $PACKAGE | cut -d'/' -f2)
+
+    # If the repository is not installed, we will clone it and install it
+    if ! command -v $REPO &> /dev/null
+    then
+        cd /tmp
+        git clone https://github.com/$USER/$REPO
+        cd $REPO
+        inst
+        exit 0
+
+    else
+        echo "Repository $PACKAGE is already installed."
+        exit 0
     fi
 else
-    echo "Package $PACKAGE which provides the command $COMMAND, is already installed."
+    install $COMMAND $PACKAGE
 fi

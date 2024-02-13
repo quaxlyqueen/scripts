@@ -1,4 +1,0 @@
-#!/bin/zsh
-
-su $SUDO_USER -c "mkdir src"
-mkdir build
