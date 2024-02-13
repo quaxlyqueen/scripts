@@ -19,22 +19,22 @@ install() {
             DISTRO=$(cat /etc/os-release | grep -oP '(?<=^ID=).+' | tr -d '"')
 
             if [[ $DISTRO == "arch" ]]; then
-                sudo pacman -S $PACKAGE
+                yes | sudo pacman -S $PACKAGE
                 exit 0
             elif [[ $DISTRO == "archarm" ]]; then
-                sudo pacman -S $PACKAGE
+                yes | sudo pacman -S $PACKAGE
                 exit 0
             elif [[ $DISTRO == "ubuntu" ]]; then
-                sudo apt-get install $PACKAGE
+                yes | sudo apt-get install $PACKAGE
                 exit 0
             elif [[ $DISTRO == "fedora" ]]; then
-                sudo dnf install $PACKAGE
+                yes | sudo dnf install $PACKAGE
                 exit 0
             elif [[ $DISTRO == "centos" ]]; then
-                sudo yum install $PACKAGE
+                yes | sudo yum install $PACKAGE
                 exit 0
             elif [[ $DISTRO == "debian" ]]; then
-                sudo apt install $PACKAGE
+                yes | sudo apt install $PACKAGE
                 exit 0
             else
                 error
@@ -45,11 +45,11 @@ install() {
 
             if command -v "brew" &> /dev/null
             then
-                brew install $PACKAGE
+                yes | brew install $PACKAGE
 
             elif command -v "port" &> /dev/null
             then
-                sudo port install $PACKAGE
+                yes | sudo port install $PACKAGE
 
             else
                 echo "Homebrew or MacPorts not found. Please install one of them before running this script."
@@ -77,14 +77,21 @@ COMMAND=$1
 PACKAGE=$2
 
 # If the command is git, we will clone the repository and install it
-if $COMMAND == "--git"; then
+if [[ "$COMMAND" == "--git" ]]; then
     USER=$(echo $PACKAGE | cut -d'/' -f1)
     REPO=$(echo $PACKAGE | cut -d'/' -f2)
 
     # If the repository is not installed, we will clone it and install it
     if ! command -v $REPO &> /dev/null
     then
-        cd /tmp
+        THIS_USER=$SUDO_USER
+
+        if [ ! -d /home/$THIS_USER/build ]; then
+            echo "Creating build directory for user $THIS_USER..."
+            su $THIS_USER -c "mkdir /home/$THIS_USER/build"
+        fi
+
+        cd /home/$THIS_USER/build
         git clone https://github.com/$USER/$REPO
         cd $REPO
         inst
