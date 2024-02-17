@@ -141,16 +141,23 @@ setup_environment() {
 }
 
 is_root
-if [[ $# -eq 1 ]]; then
-    if [[ $1 == "-h" || $1 == "--help" ]]; then
-        help
+    if [[ $# -eq 1 ]]; then
+        if [[ $1 == "-h" || $1 == "--help" ]]; then
+            help
+        fi
     fi
-fi
+
+more_install
+    if [ -f "install-extra" ]; then
+        echo "Running install-extra..."
+        sudo ./install-extra
+    fi
 
 # Install the scripts
 echo "Installing scripts..."
 sudo cp * /usr/local/bin
 setup_environment
+more_install
 
 echo "Installation complete. Please restart your terminal to use the new commands, or run 'source ~/.zshrc'."
 echo "To remove the scripts, simply delete the files in /usr/local/bin and remove the aliases from your .zshrc file."

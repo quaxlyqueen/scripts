@@ -28,7 +28,6 @@ save_desktop_entry() {
         echo "This operating system is not yet supported."
         exit 1
     fi
-
 }
 
 help() {
@@ -216,6 +215,13 @@ check_theme() {
     fi
 }
 
+install-extra() {
+    if [ -f "install-extra" ]; then
+        echo "Running install-extra..."
+        sudo ./install-extra
+    fi
+}
+
 check_args() {
     check_sudo
     check_theme
@@ -239,6 +245,7 @@ check_args() {
             PROJECT_NAME=$(pwd | cut -d '/' -f5)
             install_dependencies
             install "$PROJECT_NAME"
+            install-extra
         fi
 
     # User argument provided
@@ -263,6 +270,7 @@ check_args() {
             PROJECT_NAME=$1
             install_dependencies
             cd $PROJECT_NAME
+            install-extra
         fi
     fi
 }
