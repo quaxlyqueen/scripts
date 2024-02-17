@@ -66,7 +66,7 @@ install() {
             error
         fi
     else
-        echo "Package $PACKAGE which provides the command $COMMAND, is already installed."
+        echo "Package $PACKAGE is already installed."
     fi
 }
 
