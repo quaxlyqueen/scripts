@@ -61,8 +61,6 @@ success() {
     if [[ $CHOICE == "y" || $CHOICE == "Y" ]]; then
         save_desktop_entry $NAME $EXECUTABLE
     fi
-
-    exit 0
 }
 
 install_c() {
@@ -79,7 +77,7 @@ install_python() {
     # Get the current working directory and the virtual environment
     CWD=$(pwd)
     ENV=$(pwd)/bin/activate
-    COMMAND="python $CWD/$NAME.py"
+    COMMAND="python $CWD/src/$NAME.py"
 
     # Create the virtual environment
     python -m venv .
@@ -218,7 +216,7 @@ check_theme() {
 install-extra() {
     if [ -f "install-extra" ]; then
         echo "Running install-extra..."
-        sudo ./install-extra
+        ./install-extra
     fi
 }
 
@@ -246,6 +244,7 @@ check_args() {
             install_dependencies
             install "$PROJECT_NAME"
             install-extra
+            exit 0
         fi
 
     # User argument provided
@@ -271,6 +270,7 @@ check_args() {
             install_dependencies
             cd $PROJECT_NAME
             install-extra
+            exit 0
         fi
     fi
 }
