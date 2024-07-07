@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+NEW_ALIAS_NAME=$1
+COMMAND=$2
+
+echo "alias $1=\"$2\"" >> ~/.zshrc;
+source ~/.zshrc
