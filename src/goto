@@ -16,12 +16,12 @@ help() {
 
 # Function to validate and change directory
 validate_dir() {
-  local target_dir=$1
+  local target_dir="$1"
 
   # Check if bookmarks file exists
   if ! test -f "$bookmarks_file"; then
     echo "Error accessing bookmarks file: $bookmarks_file"
-    return
+    exit 1
   fi
 
   # Read each line in the bookmarks file
@@ -30,26 +30,23 @@ validate_dir() {
     if [[ $line == *$target_dir* ]]; then
       # Change directory and exit
       cd "$line"
-      return
+      return 0
     fi
   done < "$bookmarks_file"
 
   # Target directory not found in bookmarks
   echo "Directory '$target_dir' not found in bookmarks."
-  return
+  return 1
 }
 
 # Check for valid number of arguments
 if [[ $# -ne 1 ]]; then
   echo "Invalid usage. See 'goto --help' for details."
-  return
-elif [[ $1 == "-h" || $1 == "--help" ]]; then
-  help
-  return
+  exit 1
 fi
 
 # Validate and change directory based on argument
-validate_dir $1
+validate_dir "$1"
 
 # Exit script (should be reached after successful directory change)
-return
+exit 0
