@@ -8,7 +8,7 @@
 #     quaxlyqueen/scripts/ginit
 
 # Supported languages.
-TYPES=("c", "rust", "c-sharp", "aspnet", "java", "js", "t3", "python", "flutter", "go")
+TYPES=("c", "rust", "c-sharp", "aspnet", "java", "js", "t3", "python", "flutter", "go", "php")
 
 # Catch case where there are too many arguments.
 if [[ $# -gt 3 ]]; then     
@@ -156,6 +156,19 @@ elif [[ $LANG == "flutter" ]]; then
 # Create a new t3 web app.
 elif [[ $LANG == "t3" ]]; then
     npm create t3-app@latest
+
+elif [[ $LANG == "go" ]]; then
+    mkdir $NAME;
+    cd $NAME;
+
+    go mod init;
+
+# Create a new Flutter/Dart project.
+elif [[ $LANG == "php" ]]; then
+    mkdir $NAME
+    cd $NAME
+    cp -r ~/templates/web/php/index.php .
+    mark
 
 fi
 

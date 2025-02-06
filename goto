@@ -1,55 +1,41 @@
 #!/bin/zsh
 
-# Define the location of the bookmarks file
-bookmarks_file="$HOME/.bookmarks"
+# Dependencies:
+#     quaxlyqueen/scripts/mark
 
-# Function to display usage information
-help() {
-  echo "\nQuickly navigate to saved bookmarks in the terminal.\n"
-  echo "Usage:"
-  echo "  goto downloads"
-  echo "  goto school"
-  echo "  goto portfolio"
-  echo "  goto -h"
-  echo "  goto --help"
-}
+BOOKMARKS_FILE="/home/violet/.bookmarks"
 
-# Function to validate and change directory
-validate_dir() {
-  local target_dir=$1
+# Catch any invalid input.
+if [[ $# -eq 0 || $# -gt 1 ]]; then
+    echo "\nImproper usage. Try:"
+    echo "\ngoto [keyword]"
+    echo "      goto downloads"
+    echo "      goto school"
+    echo "      goto portfolio"
+    echo "      goto -h"
+    echo "      goto --help"
 
-  # Check if bookmarks file exists
-  if ! test -f "$bookmarks_file"; then
-    echo "Error accessing bookmarks file: $bookmarks_file"
-    return
-  fi
-
-  # Read each line in the bookmarks file
-  while IFS= read -r line; do
-    # Check if the line contains the target directory
-    if [[ $line == *$target_dir* ]]; then
-      # Change directory and exit
-      cd "$line"
-      return
-    fi
-  done < "$bookmarks_file"
-
-  # Target directory not found in bookmarks
-  echo "Directory '$target_dir' not found in bookmarks."
-  return
-}
-
-# Check for valid number of arguments
-if [[ $# -ne 1 ]]; then
-  echo "Invalid usage. See 'goto --help' for details."
-  return
+# Display help.
 elif [[ $1 == "-h" || $1 == "--help" ]]; then
-  help
-  return
+    echo "\nImproper usage. Try:"
+    echo "\ngoto [keyword]"
+    echo "      goto downloads"
+    echo "      goto school"
+    echo "      goto portfolio"
+    echo "      goto -h"
+    echo "      goto --help"
+
+else
+
+    # Locate the bookmark.
+    if [ $(grep -c "$1" $BOOKMARKS_FILE) -gt 0 ]; then
+
+      # Go to the bookmark
+      cd $(grep "$1" $BOOKMARKS_FILE | head -n 1)
+
+    # List bookmarks if bookmark was not found.
+    else
+      echo "Bookmark not found. Available bookmarks:"
+      mark -ls
+    fi
 fi
-
-# Validate and change directory based on argument
-validate_dir $1
-
-# Exit script (should be reached after successful directory change)
-return
