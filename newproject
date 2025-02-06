@@ -119,8 +119,9 @@ elif [[ $LANG == "aspnet" ]]; then
 elif [[ $LANG == "java" ]]; then
     mkdir $NAME;
     cd $NAME;
-    mark; # Bookmark new project.
     gradle init
+
+    mark;
 
 # Create a new HTML, CSS, JS project.
 elif [[ $LANG == "html" ]]; then
@@ -129,7 +130,7 @@ elif [[ $LANG == "html" ]]; then
 
     cp -r ~/templates/web/public_html .
     cd public_html;
-    mark; # Bookmark new project.
+    mark;
 
 # Create a new JavaScript project.
 elif [[ $LANG == "js" ]]; then
@@ -137,7 +138,7 @@ elif [[ $LANG == "js" ]]; then
     cd $NAME;
 
     touch main.js;
-    mark; # Bookmark new project.
+    mark;
 
 # Create a new Python project.
 elif [[ $LANG == "python" ]]; then
@@ -145,6 +146,9 @@ elif [[ $LANG == "python" ]]; then
     cd $NAME;
 
     touch main.py;
+    touch requirements.txt
+    python -m venv env
+
     mark;
 
 # Create a new Flutter/Dart project.
@@ -163,11 +167,18 @@ elif [[ $LANG == "go" ]]; then
 
     go mod init;
 
-# Create a new Flutter/Dart project.
-elif [[ $LANG == "php" ]]; then
-    mkdir $NAME
+elif [[ $LANG == "react" ]]; then
+    npm create vite@latest $NAME
     cd $NAME
-    cp -r ~/templates/web/php/index.php .
+    npm install
+    mark
+
+# Create a new PHP project.
+elif [[ $LANG == "php" ]]; then
+    cp -r ~/templates/web/php/ $NAME
+    cd $NAME
+    composer init
+
     mark
 
 fi
