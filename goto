@@ -3,7 +3,7 @@
 # Dependencies:
 #     quaxlyqueen/scripts/mark
 
-BOOKMARKS_FILE="/home/violet/.bookmarks"
+BOOKMARKS_FILE="/data/data/com.termux/files/home/.bookmarks"
 
 # Catch any invalid input.
 if [[ $# -eq 0 || $# -gt 1 ]]; then

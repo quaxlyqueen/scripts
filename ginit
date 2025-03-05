@@ -1,6 +1,8 @@
 #!/bin/zsh
 
 git init
+touch .gitignore
+echo "*.env" >> .gitignore
 
 git stage -A
 git commit -m "init commit"
