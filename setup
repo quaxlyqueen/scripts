@@ -1,7 +1,0 @@
-#!/bin/zsh
-
-mkdir dev docs downloads pictures school tmp;
-sudo pacman -S alacritty android-tools archlinux-keyring aspnet-runtime base blender bluebubbles-desktop-app code dart devhelp devhelp-docs dhcpcd discord docker dotnet-sdk dracut efibootmgr feh firefox flatpak fzf gcc git github-cli godot gradle i3-wm i3lock i3status intel-ucode iwd java-openjfx java-openjfx-doc java-openjfx-src jdk-openjdk jgrasp jre-openjdk keepassxc kubeadm kubectl libreoffice-fresh linux linux-firmware luarocks man-db man-pages maven mono nasm neofetch neovim nerd-fonts-complete-starship net-tools networkmanager network-manager-applet ninja nitrogen nmap npm nvidia obs-studio os-prober php picom pavucontrol pidgin python python-pip reflector rofi rust simplescreenrecorder sof-firmware starship steam sudo tar texinfo thunar tldr typescript unrar vi virtualbox vlc wavpack wget wireshark-cli wl-clipboard xob xorg yarn yay zoom zoxide zsh
-git clone https://github.com/quaxlyqueen/notes;
-git clone https://github.com/quaxlyqueen/templates;
-cd dev; git clone https://github.com/quaxlyqueen/scripts;

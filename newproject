@@ -11,14 +11,12 @@
 TYPES=("c", "rust", "c-sharp", "aspnet", "java", "js", "t3", "python", "flutter", "go", "php")
 
 # Catch case where there are too many arguments.
-if [[ $# -gt 3 ]]; then     
+if [[ $# -gt 2 ]]; then     
     echo "Improper usage. Try:"
-    echo "\nnewproject { language } { projectname } { -g | --git-project }"
+    echo "\nnewproject { language } { projectname }"
     echo "      newproject"
     echo "      newproject c"
     echo "      newproject c app"
-    echo "      newproject c app -g"
-    echo "      newproject c app --git-project"
     echo "      newproject -h"
     echo "      newproject --help\n"
 
@@ -35,12 +33,10 @@ elif [[ $1 == "-h" || $1 == "--help" ]]; then
     echo "Bookmarks the new project directory using the 'mark' script."
     echo "Detects required tools to use based upon language selected.\n"
     echo "Usage:"
-    echo "\nnewproject { language } { projectname } { -g | --git-project }"
+    echo "\nnewproject { language } { projectname }"
     echo "      newproject"
     echo "      newproject c"
     echo "      newproject c app"
-    echo "      newproject c app -g"
-    echo "      newproject c app --git-project"
     echo "      newproject -h"
     echo "      newproject --help\n"
 
@@ -51,25 +47,16 @@ elif [[ $1 == "-h" || $1 == "--help" ]]; then
 elif [[ $# -eq 0 ]]; then
     read "?Language: " LANG
     read "?Project name: " NAME
-    read "?Git project (y/N): " GIT
 
 # User provides the project's language.
 elif [[ $# -eq 1 ]]; then
     LANG=$1
     read "?Project name: " NAME
-    read "?Git project (y/N): " GIT
 
 # User provides arguments for the language and project name.
 elif [[ $# -eq 2 ]]; then
     LANG=$1
     NAME=$2
-    read "?Git project (y/N): " GIT
-
-# User provides arguments for all fields.
-elif [[ $# -eq 3 ]]; then
-    LANG=$1
-    NAME=$2
-    GIT=$3
 fi
 
 # Check if the language the user has provided is supported.
@@ -177,13 +164,17 @@ elif [[ $LANG == "react" ]]; then
 elif [[ $LANG == "php" ]]; then
     cp -r ~/templates/web/php/ $NAME
     cd $NAME
-    composer init
+    read "?Use Composer (y/N): " COMPOSER
+    if [[ $COMPOSER == "y" ]]; then
+        composer init
+    fi
 
     mark
 
 fi
 
+read "?Git project (y/N): " GIT
 # If the user indicated the project will be a Git project, then run the ginit script.
-if [[ $GIT == "-g" || $GIT == "--git-project" ]]; then
+if [[ $GIT == "y" || $GIT == "Y" ]]; then
     ginit;
 fi

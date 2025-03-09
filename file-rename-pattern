@@ -1,0 +1,28 @@
+#!/bin/sh
+help ()
+{
+  echo "
+  A small utility to easily and quickly rename files in bulk based upon a
+  pattern.
+
+  Proper Usage:
+      file-rename-pattern "S2 " "episode-" { --dry-run | -d }
+      file-rename-pattern "S2 " "episode-" { --exec | -e }
+
+  --dry-run is on by default.
+  ";
+}
+
+if [[ $# < 2 || $# > 3 ]]; then
+  help
+fi
+
+PATTERN=$1
+REPLACE=$2
+
+if [[ $# == 2 || ($# == 3 && ($3 == "--dry-run" || $3 == "-d" )) ]]; then
+  for f in *$PATTERN*; do echo mv -i -- "$f" "${f//$PATTERN/$REPLACE}"; done
+elif [[ $# == 3 && ($3 == "--exec" || $3 == "-e" ) ]]; then
+  for f in *$PATTERN*; do mv -i -- "$f" "${f//$PATTERN/$REPLACE}"; done
+fi
+
